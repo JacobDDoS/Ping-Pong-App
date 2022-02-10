@@ -122,6 +122,8 @@ const GameLoop = (entities, { touches, dispatch, events}) => {
         paddleSpeed = 0.2;
         AIPaddleSpeed = 0.2;
         hasBallGonePastPaddle = false;
+        scoreEntity.setScore(scoreEntity.score+10)
+        scoreEntity.score += 10;
     }
 // -------------- End of AI Paddle ------------------
 
