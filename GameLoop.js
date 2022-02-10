@@ -9,6 +9,7 @@ let AIPaddleSpeed = 0.2;
 let paddleSpeedUp = 0.01
 let hasBallGonePastPaddle = false;
 const GameLoop = (entities, { touches, dispatch, events}) => {
+    //Entities
     let playerPaddle = entities.playerPaddle
     let AIPaddle = entities.AIPaddle
     let ball = entities.ball
@@ -29,12 +30,11 @@ const GameLoop = (entities, { touches, dispatch, events}) => {
         }
     }
 
-    //Move player's paddle 
-    // playerPaddle.nextMove -= 2;
-    // if (playerPaddle.nextMove <= 0) {
-    // playerPaddle.nextMove = playerPaddle.updateFrequency;
+    //-------------------Player Paddle-------------------------
+
+    //Move player's paddle
+    //If the current position plus how much it goes up/down is out of bounds, then set the position manually 
     if (!(Math.floor(playerPaddle.position[0])+4+paddleSpeed > Constants.Y_GRID_SIZE) && isUserPressingUpButton){
-        // playerPaddle.xspeed = 1;
         playerPaddle.position[0]+=paddleSpeed;
     } else if (!(playerPaddle.position[0]-paddleSpeed <= 0) && isUserPressingDownButton) {
         playerPaddle.position[0]-=paddleSpeed;
@@ -43,11 +43,8 @@ const GameLoop = (entities, { touches, dispatch, events}) => {
     } else if (isUserPressingDownButton) {
         playerPaddle.position[0] = 0;
     }
-    // } 
+
     //Move ball
-    // ball.nextMove -= 1.25;
-    // if (ball.nextMove <= 0) {
-        // ball.nextMove = Constants.BALL_REFRESH_RATE - ballRefreshSpeedUp;
     ball.position[0] += ballSpeedY;
     ball.position[1] += ballSpeedX;
     if (!hasBallGonePastPaddle) {
@@ -85,13 +82,15 @@ const GameLoop = (entities, { touches, dispatch, events}) => {
     }
 
 //------------------- AI Paddle --------------------------
+    //Don't set the position if the ball has gone past the paddle
     if (!hasBallGonePastPaddle) {
         ball.position[1] = Math.min(Constants.X_GRID_SIZE-2, ball.position[1])
     }
     //Move paddle based on ball
+    //If ball is higher than half the paddle and more than 1 cell away, move up
+    //If ball is lower than half the paddle and more than 1 cell away, move down
     if (ball.position[0] > AIPaddle.position[0]+2 && Math.abs(ball.position[0] - (AIPaddle.position[0]+2)) >= 1 && AIPaddle.position[0] + 4 + AIPaddleSpeed < Constants.Y_GRID_SIZE) {
         AIPaddle.position[0] += AIPaddleSpeed;
-        // console.log(ball.position[0] - AIPaddle.position[0] + 2)
     } else if (ball.position[0] > AIPaddle.position[0]+2 && Math.abs(ball.position[0] - (AIPaddle.position[0]+2)) >= 1) {
         AIPaddle.position[0] = Constants.Y_GRID_SIZE-4;
     } else if (ball.position[0] < AIPaddle.position[0]+2 && Math.abs(ball.position[0] - (AIPaddle.position[0]+2)) >= 1 && AIPaddle.position[0] - AIPaddleSpeed >= 0) {
@@ -135,7 +134,6 @@ const GameLoop = (entities, { touches, dispatch, events}) => {
     if (ball.position[0]<=0) {
         ballSpeedY *= -1;
     }
-// }
 
     return entities;
 }
